@@ -1,3 +1,5 @@
+def gv
+
 pipeline {
     agent any 
     // mvn has been installed in the jenkins container so no need for tools
