@@ -1,38 +1,38 @@
 def gv
 
 pipeline {
-    agent any
+    agent any 
+    // mvn has been installed in the jenkins container so no need for tools
     stages {
-        stage("init") {
+        stage ("build jar") {
             steps {
                 script {
-                    gv = load "script.groovy"
-                }
-            }
-        }
-        stage("build jar") {
-            steps {
-                script {
-                    echo "building jar"
-                    //gv.buildJar()
+                    echo 'building the app...'
+                    sh 'mvn package'
                 }
             }
         }
         stage("build image") {
             steps {
                 script {
-                    echo "building image"
-                    //gv.buildImage()
-                }
+                    echo 'testing the docker image...'
+                    withAWS(credentials: 'my-aws-credentials', region: 'us-east-2') {
+                        sh '''
+                            docker build -t java-maven-app:2.0 .
+                            aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 876397106989.dkr.ecr.eu-west-2.amazonaws.com
+                            docker tag java-maven-app:2.0 876397106989.dkr.ecr.eu-west-2.amazonaws.com/java-maven-app:2.0
+                            docker push 876397106989.dkr.ecr.eu-west-2.amazonaws.com/java-maven-app:2.0
+                        '''
+                    }
+                }                   
             }
         }
         stage("deploy") {
             steps {
                 script {
-                    echo "deploying"
-                    //gv.deployApp()
+                    echo 'deploying the app...'
                 }
             }
         }
-    }   
+    }
 }
