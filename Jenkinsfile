@@ -8,7 +8,7 @@ pipeline {
             steps {
                 script {
                     echo 'building the app...'
-                    sh 'mvn clean install'
+                    sh 'mvn package'
                 }
             }
         }
