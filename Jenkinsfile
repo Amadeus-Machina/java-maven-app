@@ -4,7 +4,7 @@ pipeline {
     agent any 
     // mvn has been installed in the jenkins container so no need for tools
     stages {
-        stage("build jar") {
+        steps ("build jar") {
             echo 'building the app...'
             sh 'mvn package'
         }
